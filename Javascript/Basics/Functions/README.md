@@ -250,3 +250,224 @@ var x = 10;
 f(); //10
 
 ```
+
+- In other JavaScript environments such as web workers or Node.js, instead of window, the global object is self or global respectively, and this neatly points to the respective object, so we don't need to worry about which environment we are in if we are using this. Another benefit of this.
+
+```
+// The global context.
+console.log(this);
+
+Window {window: Window, self: Window, document: document, name: "", location: Location, …}
+```
+
+### this and strict mode
+
+As we have seen above, when a function is called directly, not as part of an object, its this resolves down to the global window object. Now this holds only as long as the script or function is running in non-strict mode.
+
+In strict mode, when a function is called directly, not as part of an object, its this value is set to undefined.
+
+Frankly speaking, the strict mode behavior seems to be more appropriate — when a function is NOT called as part of an object, i.e. there is no calling object for the function, its this is undefined.
+
+Shown below is an example:
+
+```
+'use strict'
+
+function f() {
+console.log(this);
+}
+
+f();//undefined
+```
+
+# JavaScript Function Arguments
+
+### Arity of a function and the length property
+
+In the case of functions in JavaScript, arity refers to the number of parameters given in the function's definition, excluding default-valued, rest and destructured parameters.
+
+To inspect the arity of given function in JavaScript, we access its length property.
+
+```
+function sum(a, b) {
+   return a + b;
+}
+
+console.log('Arity:', sum.length); //2
+```
+
+### The arguments object
+
+JavaScript provides an array-like object to all functions, excluding arrow functions, which could be used to inspect the total number of arguments passed to them, regardless of the fact that those arguments actually align with given parameters.
+
+That is the arguments object.
+
+arguments is a local variable created every time a function is called. It points to an array-like object that holds the list of all arguments passed into the function.
+
+```
+function f(a) {
+   arguments[0] = 'new';
+
+   console.log('arguments[0]:', arguments[0]);
+   console.log('a:', a);
+}
+
+f('old');
+arguments[0]: new
+a: new
+```
+
+the function, in line 2, we change the value of the parameter a and then inspect both a and arguments[0]. a would obviously change, but the most interesting thing is that arguments[0] changes as well.
+
+### The arguments.callee property
+
+The purpose of arguments.callee was to be able to call an anonymous function recursively. Apart from it, there was no other way to do so, unless the anonymous function was assigned to some identifier.
+
+```
+var nums = [1, 2, 3, 4, 5, 6, 7];
+
+var fibs = nums.map(function(n) {
+   if (n === 1) return 0;
+   if (n === 2) return 1;
+   return arguments.callee(n - 1) + arguments.callee(n - 2);
+});
+
+console.log(fibs); //[0, 1, 1, 2, 3, 5, 8]
+
+```
+
+arguments.callee reduces the readability of code, and is relatively slower as compared to calling a function via its name. Plus, with it it's not mandatory to name the function — naming functions is highly useful if we want to be able to debug errors easily, as names show in stack traces.
+
+It's also invalid to assign a value to arguments.callee in the case of an exotic arguments object.
+
+### Rest parameters
+
+A rest parameter encapsulates all the remaining arguments after the arguments for all non-rest parameters in the form of an array.
+
+There can be only one rest parameter in a function, and it ought to be the last parameter. With these two prerequisites met, the parameter works as follows:
+
+- When a function is invoked that has a rest parameter in it, each of the parameters preceding the rest parameter is resolved down with its respective argument. That is, the first argument goes into the first parameter, the second one goes into the second parameter and so on.
+
+- When all the preceding parameters are resolved, the rest of the arguments are encapsulated in a fresh array and this assigned to the rest parameter.
+
+As stated before, specifying more than one rest parameter inside a function, or specifying the rest parameter before some other parameter leads to an error:
+
+The following code snippets illustrates this:
+
+```
+// invalid to have more than one rest param
+function f(...rest1, ...rest2) {
+   console.log(rest1, rest2);
+}
+// the rest param must be the last param
+function f(...rest1, a) {
+   console.log(rest1, a); //Uncaught SyntaxError: Rest parameter must be last formal parameter
+}
+```
+
+### The spread operator
+
+The spread operator converts an iterable sequence into a list of arguments.
+...iterable
+
+An iterable sequence simply refers to any object that can be iterated over. Examples of iterable sequences
+
+### Default-valued parameters
+
+function function_name(param1, param2 = defaultValue, param3, ...) {
+// code
+}
+The parameter is denoted by putting an assignment syntax, i.e. an equals sign (=) followed by a value, after the parameter's name in the function definition.
+
+This means that we could dynamically compute the default value using a function.
+
+# JavaScript Function Closures
+
+### What are closures
+
+A function along with its lexical environment is collectively called a closure.
+Be definition, all functions in JavaScript form closures.
+
+**What is a lexical environment**
+
+The term 'lexical' simply means 'source code' or in other words, 'relating to the text of a program'.
+
+Js is rather lexically-scoped, also known as statically-scoped.
+
+Lexical means relating to the source code, or simply based on the source code. Lexical environment for a function merely refers to the environment enclosing the function's definition. It's called lexical because it's based on the source code an remains fixed throughout the execution of a program.
+
+### The [[Scopes]] attribute in Chrome
+
+According to the ECMAScript spec, every function holds an internal attribute [[Environment]] that simply contains the lexical environment of the function.
+
+```
+var a = 'easy';
+
+(function() {
+   var b = 'easy';
+
+   function f1() {
+      console.log(a, b);
+   }
+
+   function f2() {
+      var a = 'difficult';
+      var b = 'difficult';
+      f1();
+   }
+
+   f2(); // east easy
+})();
+
+
+(function() {
+   var a = 'static';
+
+   function f1() {
+      console.log(a);
+   }
+
+   function f2() {
+      var a = 'dynamic';
+      f1();
+   }
+
+   // f2();
+   console.dir(f1);
+})();
+
+```
+
+### Retaining local environments of functions
+
+```
+function f1() {
+   var a = 'difficult';
+
+   return function() {
+      console.log(a);
+   };
+}
+
+var a = 'easy';
+var f2 = f1();
+
+f2(); //difficult
+```
+
+### Practical applications of closures
+
+```
+function defineSequence(a, d) {
+   return function(n) {
+      return a + n * d;
+   }
+}
+
+var evens = defineSequence(2, 2);
+console.log(evens(0), evens(1)); //2 4
+
+
+var odds = defineSequence(1, 2);
+console.log(odds(0), odds(1), odds(99));//1 3 199
+```
