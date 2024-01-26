@@ -81,4 +81,112 @@ functionObj.call([thisValue[, arg1[, arg2[, ...[, argN]]]]])
 
 ## The apply() method
 
+Back when there was no spread operator in JavaScript, a similar result was achieved using apply().
+
+The apply() function method calls a function with a provided value for this and with given arguments passed to apply() in the form of an array.
+
+```
+var nums = [1, 50, 9, -4, -50, 0, 0, 10, 15, 13];
+var min = Math.min.apply(null, nums);
+
+console.log('The minimum number is:', min);
+
+```
+
+Remembering the distinction between call() and apply()
+There's quite a good chance that we might forget which of the two methods call() and apply() takes arguments for the underlying function in the form of arguments and which one takes them in the form of an array.
+
+It would be great if we could come up with some trick to remember this. Let's see some...
+
+So there are two names 'call' and 'apply', right? Now which one of these immediately hints at invoking a function? 'Call' or 'apply'?
+
+Well, 'call' is the more familiar term. It right away tells that we are about to call a given function. And since 'call' is more familiar, the call() method takes arguments in the form of arguments, which is the more familiar behavior.
+
+Another trick could be to memorize that 'apply' and 'array' both begin with an 'a', likewise apply() takes arguments in the form of an array.
+
+You could come up with any trick of your own and use that to remember this distinction.
+
 ## Bound functions and the bind() method
+
+A bound function wraps an ordinary JavaScript function object with a given value of this, along with given arguments.
+
+functionObj.bind([thisValue[, arg1[, arg2[, ...[, argN]]]]])
+thisValue specifies the value to be used as this inside the function functionObj, while arg1, arg2, all the way to argN, represent arguments to functionObj.
+
+This is the main difference between bind() and the other two function methods, call() and apply(). That is, bind() doesn't invoke the underlying function unlike call() and apply(). Rather, it returns back another function.
+
+This returned function, which is called a bound function, has four internal properties according to the ECMAScript spec, that makes it be recognized as a bound function:
+
+[[BoundTargetFunction]] - the function on which bind() was called.
+[[BoundArguments]] - holds the set of arguments passed to bind(), starting from its second argument.
+[[BoundThis]] - the value of this passed to bind().
+[[Call]] - the method to execute the bound function.
+
+Since bound functions have a slightly different internal behavior than normal functions, they are termed as exotic objects, as per the ECMAScript specification.
+
+```
+var name = 'Global';
+
+function logName() {
+   console.log(this.name);
+}
+
+logName(); // 'Global'
+
+
+var obj = {name: 'Object'};
+var logName2 = logName.bind(obj);
+
+logName2(); // 'Object'
+```
+
+# JavaScript Arrow Functions
+
+Learning outcomes:
+
+### What are arrow functions
+
+```
+(param1, param2, ..., paramN) => {
+   // Function body
+}
+```
+
+### Arrow functions close over this
+
+In particular, arrow functions do NOT have their own this.
+
+The value of this inside an arrow function doesn't depend on how the function is called, or whether it's bound to a particular this by virtue of calling bind() or call().
+
+Instead, the value of this inside an arrow function comes from the value of this from the outer lexical environment (the place where the function is defined).
+
+```
+var counter = {
+   i: 0,
+
+   init() {
+      setTimeout(() => {
+         this.i += 1;
+         console.log(this.i);
+      }, 1000);
+   }
+}
+```
+
+Notice how we're using this directly inside the callback provided to setTimeout() — this is because the callback is an arrow function, likewise it doesn't have its own this and instead uses this from its outer environment.
+
+This simply means that the this inside the callback arrow function is the this in init(), which we know binds to the counter object.
+
+### Arrow functions don't create their own arguments
+
+Besides no own this, the second difference between regular functions and arrow functions is that the latter does NOT its own arguments object.
+
+```
+var f = () => {
+   console.log(arguments);
+};
+
+f();
+```
+
+Here we get an error because arguments turns out be an undefined variable in the function. (Remember that arguments is also a local variable created implicitly by JavaScript.)
