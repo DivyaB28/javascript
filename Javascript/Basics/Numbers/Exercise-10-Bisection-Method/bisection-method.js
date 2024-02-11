@@ -23,10 +23,10 @@ The polynomial function gets passed as the first argument to bisection(), while 
 If there isn't a guarantee that there exists a root of the polynomial in the given interval, i.e. there is no sign change, the function bisection() must return null.
 
 In addition to this, you must take ϵ as 0.0001 in the function.
- * @param {*} f 
- * @param {*} x1 
- * @param {*} x2 
- * @returns 
+//  * @param {*} f 
+//  * @param {*} x1 
+//  * @param {*} x2 
+//  * @returns 
  */
 
 function bisection(f, x1, x2) {
