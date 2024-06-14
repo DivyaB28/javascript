@@ -12,3 +12,5 @@ The main differences compared with arrays are the following:
 - Since lists don't have indexes, we can't access values randomly. When we want to access a value, we always have to look for it by iterating through the list starting from its head or tail.
 - The good thing of not having indexes, is that insertion/deletion in any part of the list is more efficient than with arrays. We just have to redirect the pointers of the "neighbor" values, while in arrays, values need to be re-indexed.
 - Like any data structure, different methods are implemented in order to operate over the data. The most common ones include: push, pop, unshift, shift, get, set, insert, remove, and reverse.
+
+![Big O Comparision table of Linked List and array](image.png)

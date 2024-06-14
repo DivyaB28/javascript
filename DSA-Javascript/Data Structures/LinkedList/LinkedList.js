@@ -10,9 +10,10 @@ class LinkedList {
     const newNode = new Node(value);
     this.head = newNode;
     this.tail = this.head;
-    this.length = 1;
+    this.length = 0;
   }
 
+  // O(1)
   push(value) {
     const newNode = new Node(value);
     if (!this.head) {
@@ -24,6 +25,8 @@ class LinkedList {
     this.length++;
     return this;
   }
+
+  // O(n)
   pop() {
     if (!this.head) return undefined;
 
@@ -44,6 +47,7 @@ class LinkedList {
     return temp;
   }
 
+  //O(1)
   unshift(value) {
     const newNode = new Node(value);
     if (!this.head) {
@@ -55,6 +59,8 @@ class LinkedList {
     this.length++;
     return this;
   }
+
+  // O(1)
   shift() {
     if (!this.head) return undefined;
 
@@ -68,6 +74,7 @@ class LinkedList {
     return temp;
   }
 
+  // O(n)
   get(index) {
     if (index < 0 || index >= this.length) {
       return undefined;
@@ -80,6 +87,7 @@ class LinkedList {
     return temp;
   }
 
+  // O(n)
   set(index, value) {
     let temp = this.get(index);
     if (temp) {
@@ -88,6 +96,8 @@ class LinkedList {
     }
     return false;
   }
+
+  // O(n)
   insert(index, value) {
     if (index === 0) return this.unshift(value);
     if (index === this.length - 1) return this.push(value);
@@ -101,6 +111,7 @@ class LinkedList {
     return true;
   }
 
+  // O(n)
   remove(index) {
     if (index === 0) return this.shift();
     if (index === this.length - 1) return this.pop();
@@ -115,6 +126,7 @@ class LinkedList {
     return temp;
   }
 
+  // O(n)
   reverse() {
     let temp = this.head;
     this.head = this.tail;
