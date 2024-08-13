@@ -10,7 +10,7 @@ class LinkedList {
     const newNode = new Node(value);
     this.head = newNode;
     this.tail = this.head;
-    this.length = 0;
+    this.length = 1;
   }
 
   // O(1)
@@ -18,6 +18,7 @@ class LinkedList {
     const newNode = new Node(value);
     if (!this.head) {
       this.head = newNode;
+      this.tail = newNode;
     } else {
       this.tail.next = newNode;
       this.tail = newNode;
@@ -52,6 +53,7 @@ class LinkedList {
     const newNode = new Node(value);
     if (!this.head) {
       this.head = newNode;
+      this.tail = newNode;
     } else {
       newNode.next = this.head;
       this.head = newNode;
@@ -100,8 +102,8 @@ class LinkedList {
   // O(n)
   insert(index, value) {
     if (index === 0) return this.unshift(value);
-    if (index === this.length - 1) return this.push(value);
-    if (index < 0 || index >= this.length) return false;
+    if (index === this.length) return this.push(value);
+    if (index < 0 || index > this.length) return false;
 
     const newNode = new Node(value);
     let temp = this.get(index - 1);

@@ -8,3 +8,4 @@
 
 4. [Data structures in JS](https://www.freecodecamp.org/news/data-structures-in-javascript-with-examples/#stacks)
 5. [Algorithms in JS](https://www.freecodecamp.org/news/introduction-to-algorithms-with-javascript-examples/)
+6. [TakeUForward DSA A2Z sheet](https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2)
