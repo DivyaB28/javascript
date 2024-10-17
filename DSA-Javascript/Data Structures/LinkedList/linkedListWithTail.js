@@ -25,7 +25,7 @@ class LinkedList {
       let curr = this.head;
       let listValues = "";
       while (curr) {
-        listValues += `${curr} `;
+        listValues += `${curr.value} `;
         curr = curr.next;
       }
       console.log(listValues);
@@ -49,7 +49,7 @@ class LinkedList {
   // To insert an element at the end of the list
   // O(1)
   append(value) {
-    const node = new Node();
+    const node = new Node(value);
     if (this.isEmpty()) {
       this.head = node;
       this.tail = node;
@@ -63,12 +63,11 @@ class LinkedList {
   removeFromFront() {
     if (this.isEmpty()) {
       return null;
-    } else {
-      const value = this.head.value;
-      this.head = this.head.next;
-      this.size--;
-      return value;
     }
+    const value = this.head.value;
+    this.head = this.head.next;
+    this.size--;
+    return value;
   }
 
   removeFromEnd() {
@@ -91,3 +90,5 @@ class LinkedList {
     return value;
   }
 }
+
+module.exports = LinkedList;
