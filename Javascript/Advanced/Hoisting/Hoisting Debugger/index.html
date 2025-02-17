@@ -4,18 +4,102 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hoisting Debugger</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <header>
-      <h1>🔹 Hoisting Debugger</h1>
+      <h1>Hoisting Debugger</h1>
       <p>A webpage that highlights hoisted variables/functions in real time.</p>
-
-      📌 Features of the Hoisting Debugger ✅ Real-time code execution – Run
-      user-input JavaScript dynamically. ✅ Highlight hoisted
-      variables/functions – Identify hoisted var variables and function
-      declarations. ✅ Clear execution order – Show how JavaScript hoists
-      variables and functions before execution. ✅ Console output simulation –
-      Display logs and execution steps like the developer console.
     </header>
+    <main>
+      <artile>
+        <h3>Code Input</h3>
+        <textarea
+          id="codeInput"
+          placeholder="Type your javascript code here.."
+        ></textarea>
+      </artile>
+
+      <section class="output-container">
+        <h3>Execution output</h3>
+        <div class="output" id="output"></div>
+      </section>
+    </main>
+    <div class="div-container">
+      <button onclick="analyzeCode()">Analyze hoisting</button>
+      <button onclick="clearOutput()">Clear</button>
+    </div>
+    <script>
+      function analyzeCode() {
+        const code = document.getElementById("codeInput").value;
+        const outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = "";
+
+        try {
+          let hoistedItems = extractHoisted(code);
+
+          let highlightedCode = code.replace(
+            /\b(var|function|let|const)\s+(\w+)/g,
+            (match, type, name) => {
+              return `<span class="highlight">${match}</span>`;
+            }
+          );
+          outputDiv.innerHTML += `<b>Hoisted variables and functions:</b>\n ${
+            hoistedItems.join("\n") || "None"
+          } \n\n`;
+          outputDiv.innerHTML += `<b>Execution order:</b> \n`;
+
+          let logOutput = [];
+          let customConsole = {
+            log: (...args) => {
+              console.log(args);
+
+              return logOutput.push(
+                args
+                  .map((arg) => (arg === undefined ? "undefined" : arg))
+                  .join(" ")
+              );
+            },
+          };
+
+          new Function("console", code)(customConsole);
+
+          outputDiv.innerHTML += logOutput.join("\n") || "No console output.";
+        } catch (error) {
+          outputDiv.innerHTML += `<span style="color: red;">Error: ${error.message}</span>`;
+        }
+      }
+
+      function extractHoisted(code) {
+        let hoisted = [];
+        let functionMatches = [...code.matchAll(/\bfunction\s+(\w+)/g)];
+        /*
+                    The RegExp \bfunction\s+(\w+) finds function declarations.
+            The capturing group (\w+) extracts just the function name.
+            matchAll() provides an array of matches, making it easier to work with.
+                    */
+        let variableMatches = [...code.matchAll(/\bvar\s+(\w+)/g)];
+        let letMatches = [...code.matchAll(/\blet\s+(\w+)/g)];
+        let constMatches = [...code.matchAll(/\bconst\s+(\w+)/g)];
+        functionMatches.forEach((match) =>
+          hoisted.push(`function ${match[1]}() {}`)
+        );
+        variableMatches.forEach((match) => hoisted.push(`var ${match[1]};`));
+        letMatches.forEach((match) => hoisted.push(`let ${match[1]};`));
+        constMatches.forEach((match) => hoisted.push(`const ${match[1]};`));
+        return hoisted;
+      }
+
+      function clearOutput() {
+        document.getElementById("output").innerHTML = "";
+        document.getElementById("codeInput").value = "";
+      }
+    </script>
   </body>
 </html>
